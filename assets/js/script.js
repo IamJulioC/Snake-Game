@@ -1,22 +1,30 @@
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
-const audio = new Audio('./assets/audio/somCobrinha.mp3')
-const size = 30
+const score = document.querySelector('.score-value');
+const menu = document.querySelector('.menu-screen');
+const buttonPlay = document.querySelector('.btn-play')
+const finalScore = document.querySelector('.final-score > span');
+const audio = new Audio('./assets/audio/somCobrinha.mp3');
 
-const snake = [
-    {x:270, y:240}
-]
+const size = 30
+const initialPosition = { x: 270, y: 240 }
+
+let snake = [initialPosition]
+
+const incrementScore = () => {
+    score.innerText = +score.innerText + 10
+};
 
 const randomNumber = (min, max) => {
 
     return Math.round(Math.random() * (max - min) + min)
-}
+};
 
 const randomPosition = () => {
 
     const number = randomNumber(0, canvas.width - size)
     return Math.round(number / 30) * 30
-}
+};
 
 const randomColor = () => {
 
@@ -25,13 +33,13 @@ const randomColor = () => {
     const b = randomNumber(0, 255)
 
     return `rgb(${r}, ${g}, ${b})`
-}
+};
 
 const food = {
     x: randomPosition(),
     y: randomPosition(),
     color: randomColor()
-}
+};
 
 let direction, loopId 
 
@@ -44,7 +52,7 @@ const drawFood = () =>{
     context.fillStyle = color
     context.fillRect(x, y, size, size)
     context.shadowColor = 0
-}
+};
 
 const drawSnake = () =>{
 
@@ -58,7 +66,7 @@ const drawSnake = () =>{
 
         context.fillRect(position.x, position.y, size, size)
     })
-}
+};
 
 const moveSnake = () => {
 
@@ -84,7 +92,7 @@ const moveSnake = () => {
     }
 
     snake.shift()
-}
+};
 
 const drawGrid = () =>{
 
@@ -102,7 +110,7 @@ const drawGrid = () =>{
         context.lineTo(600, i)
         context.stroke()
     }
-}
+};
 
 const checkEat = () =>{
 
@@ -111,6 +119,7 @@ const checkEat = () =>{
     if(head.x == food.x && head.y == food.y){
         snake.push(head)
         audio.play()
+        incrementScore()
 
         let x = randomPosition()
         let y = randomPosition()
@@ -124,7 +133,7 @@ const checkEat = () =>{
         food.y = y
         food.color = randomColor()
     }
-}
+};
 
 const checkCollision = () =>{
 
@@ -141,12 +150,17 @@ const checkCollision = () =>{
     if(wallColision || selfColision){
         gameOver()
     }
-}
+};
 
 const gameOver = () =>{
     direction = undefined
+
+    menu.style.display = 'flex'
+    finalScore.innerText = score.innerText
+
+    canvas.style.filter = 'blur(8px)'
     
-}
+};
 
 const gameLoop = () =>{
 
@@ -163,7 +177,7 @@ const gameLoop = () =>{
     loopId = setTimeout(() =>{
         gameLoop()
     },300)
-}
+};
 
 gameLoop()
 
@@ -184,6 +198,12 @@ document.addEventListener('keydown', (event) =>{
     if(event.key == 'ArrowUp' && direction != 'down'){
         direction = 'up'
     }
+});
+
+buttonPlay.addEventListener("click", () => {
+    score.innerText = "00"
+    menu.style.display = "none"
+    canvas.style.filter = "none"
+
+    snake = [initialPosition]
 })
-
-

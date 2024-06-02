@@ -9,6 +9,7 @@ body{
 }
 
 .canvas{
+    max-height: 70vh;
     background-color: #010c0c;
 }
 
